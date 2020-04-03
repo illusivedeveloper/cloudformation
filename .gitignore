@@ -1,4 +1,7 @@
 .*
+boto3
+json
+request
 bin/
 include/
 lib/

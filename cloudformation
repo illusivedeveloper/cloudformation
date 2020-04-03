@@ -1,10 +1,13 @@
-#!/usr/bin/python3
+#!/home/nitish/cloudformation/bin/python
 
 import urllib.request as request
 import json
+#import boto3
+import troposphere
+import yaml
 
 class Unixtime:
-    def __init__(self):
+    def userinput(self):
         self.state = input("Enter State: ")
         self.province = input("Enter Province: ")
         self.urlstring = "http://worldtimeapi.org/api/timezone/" + self.state + "/" + self.province + ".json"
@@ -22,8 +25,34 @@ class Unixtime:
                 print('An error occurred while attempting to retrieve data from the API.')
 
     def extract(self):
-        self.time = self.data.get('unixtime')
-        print("UnixTime: ", self.time)
+        global time 
+        time = self.data.get('unixtime')
+        print("UnixTime: ", time)
+
+class Cloudformation(Unixtime):
+    def auth(self):
+        #self.session = boto3.Session(profile_name='illusivedeveloper')
+        pass
+
+    def stack(self):
+        #stack_client = self.session.client('cloudformation')
+        self.urlstring = "https://s3.amazonaws.com/cloudformation-templates-us-east-1/EC2InstanceWithSecurityGroupSample.template"
+        with request.urlopen(self.urlstring) as response:
+            if response.getcode() == 200:
+                jsonsource = response.read()
+                self.data = json.loads(jsonsource)
+                #print(json.dumps(self.data))
+                #print(yaml.dump(self.data, allow_unicode=True))
+                testyaml = yaml.dump(self.data, allow_unicode=True)
+                with open('test.yaml', 'w') as f:
+                    f.write(testyaml)
+
+    def export(self):
+        pass
 
 if __name__ == "__main__":
-    Unixtime = Unixtime()
+    ut = Unixtime()
+    ut.userinput()
+
+    cfn = Cloudformation()
+    cfn.stack()
