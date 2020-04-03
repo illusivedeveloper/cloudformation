@@ -43,7 +43,7 @@ class Cloudformation(Unixtime):
                 self.data = json.loads(jsonsource)
                 #print(json.dumps(self.data))
                 #print(yaml.dump(self.data, allow_unicode=True))
-                testyaml = yaml.dump(self.data, allow_unicode=True)
+                self.testyaml = yaml.dump(self.data, allow_unicode=True)
                 with open('test.yaml', 'w') as f:
                     f.write(testyaml)
 
