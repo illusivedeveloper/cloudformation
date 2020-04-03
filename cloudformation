@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+
+import urllib.request as request
+import json
+
+class Unixtime:
+    def __init__(self):
+        self.state = input("Enter State: ")
+        self.province = input("Enter Province: ")
+        self.urlstring = "http://worldtimeapi.org/api/timezone/" + self.state + "/" + self.province + ".json"
+        print("URL request string: ", self.urlstring)
+        self.url()
+        self.extract()
+    
+    def url(self):
+        with request.urlopen(self.urlstring) as response:
+            if response.getcode() == 200:
+                source = response.read()
+                self.data = json.loads(source)
+                #print(json.dumps(self.data))
+            else:
+                print('An error occurred while attempting to retrieve data from the API.')
+
+    def extract(self):
+        self.time = self.data.get('unixtime')
+        print("UnixTime: ", self.time)
+
+if __name__ == "__main__":
+    Unixtime = Unixtime()
