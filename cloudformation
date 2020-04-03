@@ -2,7 +2,7 @@
 
 import urllib.request as request
 import json
-#import boto3
+import boto3
 import troposphere
 import yaml
 
@@ -30,12 +30,7 @@ class Unixtime:
         print("UnixTime: ", time)
 
 class Cloudformation(Unixtime):
-    def auth(self):
-        #self.session = boto3.Session(profile_name='illusivedeveloper')
-        pass
-
-    def stack(self):
-        #stack_client = self.session.client('cloudformation')
+    def createstack(self):
         self.urlstring = "https://s3.amazonaws.com/cloudformation-templates-us-east-1/EC2InstanceWithSecurityGroupSample.template"
         with request.urlopen(self.urlstring) as response:
             if response.getcode() == 200:
@@ -45,14 +40,36 @@ class Cloudformation(Unixtime):
                 #print(yaml.dump(self.data, allow_unicode=True))
                 self.testyaml = yaml.dump(self.data, allow_unicode=True)
                 with open('test.yaml', 'w') as f:
-                    f.write(testyaml)
+                    f.write(self.testyaml)
 
-    def export(self):
-        pass
+    def writeunixtime(self):
+        with open('test.yaml','r') as yamlfile:
+            cur_yaml = yaml.load(yamlfile)
+            new_yaml_data_dict = {
+                    "UnixTime": {
+                        "Description": "UnixTime extracted from API",
+                        "Value": time,
+                        "Export": {
+                        "Name": "UnixTime"
+                        }
+                    }
+                    }
+        
+            cur_yaml['Outputs'].update(new_yaml_data_dict)
+            #print(cur_yaml)
+
+        with open('test.yaml','w') as yamlfile:
+            yaml.safe_dump(cur_yaml, yamlfile)
+
+    def auth(self):
+        self.session = boto3.Session(profile_name='illusivedeveloper')
+        stack_client = self.session.client('cloudformation')
 
 if __name__ == "__main__":
     ut = Unixtime()
     ut.userinput()
 
     cfn = Cloudformation()
-    cfn.stack()
+    cfn.createstack()
+    cfn.writeunixtime()
+    #cfn.auth()
