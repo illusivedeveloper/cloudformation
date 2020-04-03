@@ -301,6 +301,11 @@ Outputs:
       Fn::GetAtt:
       - EC2Instance
       - PublicIp
+  UnixTime:
+    Description: UnixTime extracted from API
+    Export:
+      Name: UnixTime
+    Value: 1585938369
 Parameters:
   InstanceType:
     AllowedValues:
